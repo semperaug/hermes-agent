@@ -9,6 +9,8 @@ from datetime import datetime
 from enum import Enum
 from typing import Any, Optional
 
+from session_rules.whatsapp_identity import canonical_whatsapp_identifier
+
 
 logger = logging.getLogger(__name__)
 
@@ -405,8 +407,11 @@ def detached_route_of(source) -> str | None:
 
 
 def _canonical_participant(source: SessionSource) -> Optional[str]:
-    """Sender id for key isolation."""
+    """Sender id for key isolation; WhatsApp JID/LID aliases are canonicalized so alias flips
+    cannot split one member into two sessions."""
     participant_id = source.user_id_alt or source.user_id
+    if participant_id and source.platform == Platform.WHATSAPP:
+        participant_id = canonical_whatsapp_identifier(str(participant_id)) or participant_id
     return participant_id
 
 
@@ -426,6 +431,8 @@ def build_session_key(
         return detached
     is_dm = source.chat_type == "dm"
     chat_id = source.chat_id
+    if is_dm and source.platform == Platform.WHATSAPP:
+        chat_id = canonical_whatsapp_identifier(chat_id)
     # Discord auto-thread continuity: key a channel-initiating message on the thread it WILL be
     # delivered into (prospective_thread_id), and normalize the chat_type slot to "thread" so
     # in-thread follow-ups byte-match. A real thread_id always wins. DMs use thread_id only.
