@@ -1,0 +1,25 @@
+{
+  "exclude": [
+    "tests/e2e/",
+    "tests/gateway/",
+    "tests/tui_gateway/",
+    "tests-js/",
+    "evals/",
+    "node_modules/",
+    "**/node_modules/**",
+    "apps/",
+    "ui-tui/",
+    "web/",
+    "website/",
+    "fixture/",
+    "nix/",
+    "docker/",
+    "locales/",
+    "optional-mcps/",
+    "optional-skills/",
+    "**/__pycache__/**",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.spec.ts"
+  ]
+}
